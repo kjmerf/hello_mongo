@@ -84,22 +84,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--mongo_user",
-        dest="mongo_user",
-        required=False,
-        default="noun,adjective,verb,adverb",
-        help="Parts of speech to return. Must be noun, adjective, verb and/or adverb",
-    )
-
-    parser.add_argument(
-        "--mongo_password",
-        dest="pos",
-        required=False,
-        default="noun,adjective,verb,adverb",
-        help="Parts of speech to return. Must be noun, adjective, verb and/or adverb",
-    )
-
-    parser.add_argument(
         "--pos",
         dest="pos",
         required=False,
