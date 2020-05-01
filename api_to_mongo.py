@@ -33,7 +33,7 @@ def get_data(text, lang, type, limit, pos):
 
 
 def insert_data(data):
-    """Inserts data into Mongo DB"""
+    """Inserts data into MongoDB """
 
     user = os.getenv("MONGO_USER")
     password = os.getenv("MONGO_PASSWORD")
