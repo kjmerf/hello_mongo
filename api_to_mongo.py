@@ -38,7 +38,7 @@ def insert_data(data):
     user = os.getenv("MONGO_USER")
     password = os.getenv("MONGO_PASSWORD")
     cluster = os.getenv("MONGO_CLUSTER")
-    database = os.getenv("MONGO_DATABASE")
+    database = "code_names"
 
     client = pymongo.MongoClient(
         f"mongodb+srv://{user}:{password}@{cluster}/{database}?retryWrites=true&w=majority",
