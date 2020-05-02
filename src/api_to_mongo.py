@@ -56,16 +56,21 @@ def insert_data(client, database, collection, data):
         pass
 
 
-def clean_data(client, database, raw_collection, clean_collection, unique_index):
+def clean_data(client, database, raw_collection, clean_collection):
     """Creates clean collection from raw collection"""
 
     db = client[database]
 
     # create unique index to reject duplicates in clean collection
-    db[clean_collection].create_index([(unique_index, pymongo.ASCENDING)], unique=True)
+    db[clean_collection].create_index(
+        [("text", pymongo.DESCENDING), ("type", pymongo.DESCENDING)], unique=True
+    )
 
     for document in db[raw_collection].find():
-        insert_data(client, database, clean_collection, document["response"][0])
+        response = document["response"][0]
+        # type is not included in the response but we want this field in the clean documents
+        response["type"] = document["request"]["type"]
+        insert_data(client, database, clean_collection, response)
 
 
 if __name__ == "__main__":
@@ -91,5 +96,4 @@ if __name__ == "__main__":
         settings.MONGO_DATABASE,
         settings.raw_collection,
         settings.clean_collection,
-        settings.clean_collection_unique_index,
     )

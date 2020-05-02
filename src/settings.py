@@ -10,7 +10,6 @@ MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 
 raw_collection = "words"
 clean_collection = "words_clean"
-clean_collection_unique_index = "text"
 result_types = ("stimulus", "response")
 
 words_to_insert = (
