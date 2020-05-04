@@ -36,7 +36,6 @@ def get_data(
     else:
         raise Exception(response.status_code)
 
-
 def get_mongo_client(cluster, database, user, password):
     """Get MongoDB client"""
 
@@ -50,6 +49,7 @@ def insert_data(client, database, collection, data):
     """Inserts data into collection"""
 
     try:
+        # maybe change to print the word
         result = client[database][collection].insert_one(data)
         print(f"Inserted: {result.inserted_id} into {collection}")
     except pymongo.errors.DuplicateKeyError:
@@ -84,12 +84,17 @@ if __name__ == "__main__":
 
     for text in settings.words_to_insert:
         for type in settings.result_types:
-            insert_data(
-                client,
-                settings.MONGO_DATABASE,
-                settings.raw_collection,
-                get_data(api_key=settings.WAN_API_KEY, text=text, type=type),
-            )
+            for pos in settings.parts_of_speech:
+                insert_data(
+                    client,
+                    settings.MONGO_DATABASE,
+                    settings.raw_collection,
+                    get_data(api_key=settings.WAN_API_KEY,
+                             text=text,
+                             type=type,
+                             limit=300,
+                             pos=pos),
+                )
 
     clean_data(
         client,

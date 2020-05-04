@@ -11,20 +11,10 @@ MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 raw_collection = "words"
 clean_collection = "words_clean"
 result_types = ("stimulus", "response")
+parts_of_speech = ("noun", "verb", "adjective", "adverb")
 
 words_to_insert = (
-    "Hollywood",
-    "Well",
-    "Foot",
-    "New York",
-    "Spring",
-    "Court",
-    "Tube",
-    "Point",
-    "Tablet",
-    "Slip",
-    "Date",
-    "Drill",
-    "Lemon",
-    "Bell",
+    "blood"
+    "hood"
+    "slug"
 )
