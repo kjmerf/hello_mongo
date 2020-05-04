@@ -36,6 +36,7 @@ def get_data(
     else:
         raise Exception(response.status_code)
 
+
 def get_mongo_client(cluster, database, user, password):
     """Get MongoDB client"""
 
@@ -45,13 +46,13 @@ def get_mongo_client(cluster, database, user, password):
     )
 
 
-def insert_data(client, database, collection, data):
+def insert_data(client, database, collection, data, print_message=None):
     """Inserts data into collection"""
 
     try:
-        # maybe change to print the word
         result = client[database][collection].insert_one(data)
-        print(f"Inserted: {result.inserted_id} into {collection}")
+        print_message = print_message or result.inserted_id
+        print(f"Inserted {print_message} into {collection}")
     except pymongo.errors.DuplicateKeyError:
         pass
 
@@ -61,16 +62,28 @@ def clean_data(client, database, raw_collection, clean_collection):
 
     db = client[database]
 
-    # create unique index to reject duplicates in clean collection
+    # create unique index to prevent duplicates in clean collection
     db[clean_collection].create_index(
-        [("text", pymongo.DESCENDING), ("type", pymongo.DESCENDING)], unique=True
+        [
+            ("text", pymongo.DESCENDING),
+            ("type", pymongo.DESCENDING),
+            ("pos", pymongo.DESCENDING),
+        ],
+        unique=True,
     )
 
     for document in db[raw_collection].find():
         response = document["response"][0]
-        # type is not included in the response but we want this field in the clean documents
+        # type and pos are not in response but we want them in clean documents
         response["type"] = document["request"]["type"]
-        insert_data(client, database, clean_collection, response)
+        response["pos"] = document["request"]["pos"]
+        insert_data(
+            client=client,
+            database=database,
+            collection=clean_collection,
+            data=response,
+            print_message=(response["text"], response["type"], response["pos"]),
+        )
 
 
 if __name__ == "__main__":
@@ -86,14 +99,17 @@ if __name__ == "__main__":
         for type in settings.result_types:
             for pos in settings.parts_of_speech:
                 insert_data(
-                    client,
-                    settings.MONGO_DATABASE,
-                    settings.raw_collection,
-                    get_data(api_key=settings.WAN_API_KEY,
-                             text=text,
-                             type=type,
-                             limit=300,
-                             pos=pos),
+                    client=client,
+                    database=settings.MONGO_DATABASE,
+                    collection=settings.raw_collection,
+                    data=get_data(
+                        api_key=settings.WAN_API_KEY,
+                        text=text,
+                        type=type,
+                        limit=300,
+                        pos=pos,
+                    ),
+                    print_message=(text, type, pos),
                 )
 
     clean_data(

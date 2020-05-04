@@ -13,8 +13,4 @@ clean_collection = "words_clean"
 result_types = ("stimulus", "response")
 parts_of_speech = ("noun", "verb", "adjective", "adverb")
 
-words_to_insert = (
-    "blood"
-    "hood"
-    "slug"
-)
+words_to_insert = ("blood", "hood", "slug")
