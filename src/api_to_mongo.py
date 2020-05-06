@@ -113,7 +113,6 @@ def get_max(client, database, clean_collection, clean_max_collection):
                         max[item["item"]] = item["weight"]
                     elif item["weight"] > max[item["item"]]:
                         max[item["item"]] = item["weight"]
-        print({text: max})
 
         insert_data(
             client=client,
