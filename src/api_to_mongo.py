@@ -57,6 +57,13 @@ def insert_data(client, database, collection, data, print_message=None):
         pass
 
 
+def get_document(client, database, collection, text, type, pos):
+    """Get document from collection"""
+
+    db = client[database]
+    return db[collection].find_one({"text": text, "type": type, "pos": pos})
+
+
 def clean_data(client, database, raw_collection, clean_collection):
     """Creates clean collection from raw collection"""
 
@@ -83,6 +90,36 @@ def clean_data(client, database, raw_collection, clean_collection):
             collection=clean_collection,
             data=response,
             print_message=(response["text"], response["type"], response["pos"]),
+        )
+
+
+def get_max(client, database, clean_collection, clean_max_collection):
+    """Creates clean max collection from clean collection"""
+
+    # create unique index to prevent duplicates in clean collection
+    client[database][clean_max_collection].create_index(
+        [("text", pymongo.DESCENDING)], unique=True,
+    )
+
+    for text in settings.words_to_insert:
+        max = {}
+        for type in settings.result_types:
+            for pos in settings.parts_of_speech:
+                document = get_document(
+                    client, database, settings.clean_collection, text, type, pos
+                )
+                for item in document["items"]:
+                    if item["item"] not in max:
+                        max[item["item"]] = item["weight"]
+                    elif item["weight"] > max[item["item"]]:
+                        max[item["item"]] = item["weight"]
+
+        insert_data(
+            client=client,
+            database=database,
+            collection=clean_max_collection,
+            data={text: max},
+            print_message=(text),
         )
 
 
@@ -117,4 +154,11 @@ if __name__ == "__main__":
         settings.MONGO_DATABASE,
         settings.raw_collection,
         settings.clean_collection,
+    )
+
+    get_max(
+        client,
+        settings.MONGO_DATABASE,
+        settings.clean_collection,
+        settings.clean_max_collection,
     )

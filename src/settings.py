@@ -10,6 +10,7 @@ MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 
 raw_collection = "words"
 clean_collection = "words_clean"
+clean_max_collection = "words_clean_max"
 result_types = ("stimulus", "response")
 parts_of_speech = ("noun", "verb", "adjective", "adverb")
 
