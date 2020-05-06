@@ -4,7 +4,6 @@ import ssl
 
 import pymongo
 import requests
-
 import settings
 
 
