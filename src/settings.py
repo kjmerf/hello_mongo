@@ -15,5 +15,5 @@ clean_max_collection = "words_clean_max"
 result_types = ("stimulus", "response")
 parts_of_speech = ("noun", "verb", "adjective", "adverb")
 
-#words_to_insert = ("blood", "hood", "slug")
-words_to_insert = read_codenames_words.word_list[:20]
+# words_to_insert = ("blood", "hood", "slug")
+words_to_insert = read_codenames_words.word_list[:100]
