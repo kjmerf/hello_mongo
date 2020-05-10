@@ -92,6 +92,39 @@ def clean_data(client, database, raw_collection, clean_collection):
         )
 
 
+def get_max(client, database, clean_collection, clean_max_collection):
+    """Creates clean max collection from clean collection"""
+
+    # create unique index to prevent duplicates in clean collection
+    client[database][clean_max_collection].create_index(
+        [("text_type", pymongo.DESCENDING)], unique=True,
+    )
+
+    for text in settings.words_to_insert:
+        for type in settings.result_types:
+            max = {}
+            for pos in settings.parts_of_speech:
+                document = get_document(
+                    client, database, settings.clean_collection, text, type, pos
+                )
+                if document:
+                    for item_dct in document["items"]:
+                        if item_dct["item"] not in max:
+                            max[item_dct["item"]] = item_dct["weight"]
+                        elif item_dct["weight"] > max[item_dct["item"]]:
+                            max[item_dct["item"]] = item_dct["weight"]
+                else:
+                    print(f"{text}, {type}, {pos} not found in {clean_collection}")
+
+            insert_data(
+                client=client,
+                database=database,
+                collection=clean_max_collection,
+                data={"text_type": f"{text}_{type}", "items": max},
+                print_message=(text, type),
+            )
+
+
 if __name__ == "__main__":
 
     client = get_mongo_client(
@@ -123,4 +156,11 @@ if __name__ == "__main__":
         settings.MONGO_DATABASE,
         settings.raw_collection,
         settings.clean_collection,
+    )
+
+    get_max(
+        client,
+        settings.MONGO_DATABASE,
+        settings.clean_collection,
+        settings.clean_max_collection,
     )
