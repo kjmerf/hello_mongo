@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
 import os
-import read_codenames_words
+
+import helpers
 
 WAN_API_KEY = os.getenv("WAN_API_KEY")
 MONGO_CLUSTER = os.getenv("MONGO_CLUSTER")
@@ -15,5 +16,5 @@ clean_max_collection = "words_clean_max"
 result_types = ("stimulus", "response")
 parts_of_speech = ("noun", "verb", "adjective", "adverb")
 
-# words_to_insert = ("blood", "hood", "slug")
-words_to_insert = read_codenames_words.word_list[:100]
+words_to_load_file = "words_to_load.txt"
+words_to_insert = helpers.get_words(words_to_load_file)
