@@ -1,5 +1,5 @@
 # hello mongo
-This application seeds a MongoDB database from the Word Associations API:
+This repo can be used to seed a MongoDB database from the Word Associations API:
 https://wordassociations.net/en/api.
 
 I made it to learn pymongo.
